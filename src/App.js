@@ -1,25 +1,58 @@
-import logo from './logo.svg';
+import { Card, DayForecast } from './lib/components';
 import './App.css';
+import './lib/component-styles.css'
+import { useEffect, useState } from 'react';
+import { WeatherApi } from './lib/api/weatherApi';
+import { formatDate, generateHourlyForecast } from './lib/utils';
 
 function App() {
+  const [forecastData, setForecastData] = useState(null);
+  useEffect(() => {
+    WeatherApi("95138").fetchForecastData(3).then(res => {
+      console.log("Fetch results:", res)
+      setForecastData(res);
+    })
+  }, [])
+
+  if (!forecastData) {
+    return <></>
+  }
+
+  //destructuring data for current weather card
+  const {
+    last_updated_epoch: currentTimeEpoch, 
+    temp_c: currentTempC, 
+    condition: { text: conditionText, icon: conditionIcon } 
+  } = forecastData.current;
+  //destructuring data for lows-high forecast card + precip + uvi
+  const {
+    mintemp_c: minTempC,
+    maxtemp_c: maxTempC,
+    totalprecip_mm: totalPrecipitationMM,
+    uv
+  } = forecastData.forecast.forecastday[0].day;
+
+  const { location } = forecastData;
+  //generate array of hourly forecast entries from forecastday.hour based on current time
+  const hourlyForecast = generateHourlyForecast(forecastData.forecast.forecastday);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <main className='app-container'>
+      <nav className='top-bar'>
+      </nav>
+      <section className='weather-container'>
+        {/* currentTimeEpoch is in seconds, so i gotta convert it to ms */}
+        <div className='weather-container__current-weather'>
+          <Card top={formatDate(new Date(currentTimeEpoch * 1000))} mid={`${currentTempC}\u00b0C`} bot={conditionText}/>
+          <Card top="Lows - Highs" mid={`${minTempC}\u00b0C - ${maxTempC}\u00b0C`}/>
+          <Card top="Precipitation" mid={`${totalPrecipitationMM}mm`} bot="DESC PLCHDR"/>
+          <Card top="UV Index" mid={uv} bot="DESC PLCHDR"/>
+        </div>
+        <DayForecast locationData={location} forecastDaysByHour={hourlyForecast}/>
+        
+      </section>
+    </main>
+  )
 }
 
 export default App;
