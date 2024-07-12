@@ -1,18 +1,19 @@
 import { Card, DayForecast } from './lib/components';
 import './App.css';
 import './lib/component-styles.css'
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { WeatherApi } from './lib/api/weatherApi';
 import { formatDate, generateHourlyForecast } from './lib/utils';
 
 function App() {
   const [forecastData, setForecastData] = useState(null);
+  const [locationSearchTerm, setLocationSearchTerm] = useState(null)
   useEffect(() => {
-    WeatherApi("95138").fetchForecastData(3).then(res => {
+    WeatherApi(locationSearchTerm ? locationSearchTerm : "95138").fetchForecastData(3).then(res => {
       console.log("Fetch results:", res)
       setForecastData(res);
     })
-  }, [])
+  }, [locationSearchTerm])
 
   if (!forecastData) {
     return <></>
@@ -36,9 +37,21 @@ function App() {
   //generate array of hourly forecast entries from forecastday.hour based on current time
   const hourlyForecast = generateHourlyForecast(forecastData.forecast.forecastday);
 
+  function handleLocationSubmit(e) {
+    e.preventDefault();
+    const zipFormData = (new FormData(e.target)).get('zip')
+    console.log(zipFormData);
+    setLocationSearchTerm(zipFormData);
+
+  }
+  
+
   return (
     <main className='app-container'>
       <nav className='top-bar'>
+        <form onSubmit={handleLocationSubmit}>
+          <input name="zip" placeholder="ZIP Code, City Name, State..."/>
+        </form>
       </nav>
       <section className='weather-container'>
         {/* currentTimeEpoch is in seconds, so i gotta convert it to ms */}

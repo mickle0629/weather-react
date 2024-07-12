@@ -15,7 +15,7 @@ export function DayForecast( { locationData, forecastDaysByHour }) {
   console.log("Day forecast data:", forecastDaysByHour);
   return (
     <section className="temperature-forecast">
-      <h1 className="temperature-forecast__title">Today's Forecast</h1>
+      <h1 className="temperature-forecast__title">Today's 24-hr Forecast</h1>
       <h2 className="temperature-forecast__location-name">{locationData.name}, {locationData.region}</h2>
       <div className="temperature-forecast__cards">
         <Card top="Now" mid={forecastDaysByHour[0].temp_c} isForecastCard={true}/>

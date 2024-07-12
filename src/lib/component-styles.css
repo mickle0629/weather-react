@@ -28,6 +28,10 @@
   padding: 20px;
 }
 
+.temperature-forecast__location-name {
+  text-align: center;
+}
+
 .temperature-forecast__cards {
   display: flex;
   overflow: scroll;
