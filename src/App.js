@@ -49,20 +49,21 @@ function App() {
   return (
     <main className='app-container'>
       <nav className='top-bar'>
-        <form onSubmit={handleLocationSubmit}>
-          <input name="zip" placeholder="ZIP Code, City Name, State..."/>
+        <form className='top-bar__location-form' onSubmit={handleLocationSubmit}>
+          <input className='top-bar__location-input' name="zip" placeholder="ZIP Code, City Name, State..."/>
         </form>
       </nav>
       <section className='weather-container'>
         {/* currentTimeEpoch is in seconds, so i gotta convert it to ms */}
         <div className='weather-container__current-weather'>
-          <Card top={formatDate(new Date(currentTimeEpoch * 1000))} mid={`${currentTempC}\u00b0C`} bot={conditionText}/>
-          <Card top="Lows - Highs" mid={`${minTempC}\u00b0C - ${maxTempC}\u00b0C`}/>
+          <Card top={formatDate(new Date(currentTimeEpoch * 1000))} mid={`${Math.ceil(currentTempC)}\u00b0C`} bot={conditionText} preBotIcon={conditionIcon}/>
+          <Card top="Lows - Highs" mid={`${Math.ceil(minTempC)}\u00b0C - ${Math.ceil(maxTempC)}\u00b0C`}/>
           <Card top="Precipitation" mid={`${totalPrecipitationMM}mm`} bot="DESC PLCHDR"/>
           <Card top="UV Index" mid={uv} bot="DESC PLCHDR"/>
         </div>
-        <DayForecast locationData={location} forecastDaysByHour={hourlyForecast}/>
-        
+        <div className='weather-container__forecast'>
+          <DayForecast locationData={location} forecastDaysByHour={hourlyForecast}/>
+        </div>
       </section>
     </main>
   )

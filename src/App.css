@@ -10,13 +10,29 @@
 }
 
 .top-bar {
-  height: 3.7rem; 
+  display: flex;
+  align-items: center;
+  height: 70px; 
   background-color: #0E9D47;
+}
+
+.top-bar__location-form {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  padding-left: 10px;
+}
+
+.top-bar__location-input {
+  height: 50%;
+  border-radius: 10px;
+  text-indent: 10px;
+  font-size: 1.25rem;
 }
 
 .weather-container {
   display: grid;
-  grid-template-columns: 25% 75%;
+  grid-template-columns: 35% 65%;
   gap: 20px;
   padding: 20px 7% 20px 7%;
   flex-direction: column;
