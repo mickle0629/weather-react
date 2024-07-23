@@ -12,6 +12,7 @@
 .top-bar {
   display: flex;
   align-items: center;
+  gap: 10px;
   height: 70px; 
   background-color: #0E9D47;
 }
@@ -28,6 +29,19 @@
   border-radius: 10px;
   text-indent: 10px;
   font-size: 1.25rem;
+}
+
+.top-bar__btn {
+  height: 50%;
+  border-radius: 10px;
+  font-size: 20px;
+  background-color: #58BF81;
+  padding: 0 10px 0 10px;
+  border: 0;
+}
+
+.top-bar__btn--location {
+  background-color: white;
 }
 
 .weather-container {

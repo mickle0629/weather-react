@@ -17,11 +17,11 @@ export function DayForecast( { locationData, forecastDaysByHour }) {
   return (
     <section className="temperature-forecast">
       <h1 className="temperature-forecast__title">Today's 24-hr Forecast</h1>  {/* VVVVV some places dont have a region name, so this makes sure there's no floating commas */}
-      <h2 className="temperature-forecast__location-name">{locationData.name} {locationData.region && ","}{locationData.region}</h2>
+      <h2 className="temperature-forecast__location-name">{locationData.name}{locationData.region && ","}{locationData.region}</h2>
       <div className="temperature-forecast__cards">
         <ForecastCard timestamp="Now" temperature={forecastDaysByHour[0].temp_c}/>
         {forecastDaysByHour.slice(1).map((hour) => (
-          <ForecastCard timestamp={hour.time} temperature={hour.temp_c}/>
+          <ForecastCard key={hour.time} timestamp={hour.time} temperature={hour.temp_c}/>
         ))}
       </div>
     </section>
