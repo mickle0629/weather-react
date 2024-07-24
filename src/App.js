@@ -3,12 +3,13 @@ import './App.css';
 import './lib/component-styles.css'
 import { useEffect, useRef, useState } from 'react';
 import { WeatherApi } from './lib/api/weatherApi';
-import { formatDate, generateHourlyForecast } from './lib/utils';
-import { v4 as uuidv4 } from 'uuid';
-
+import { formatDate, generateHourlyForecast, addLocationNameToLocalStorage } from './lib/utils';
 function App() {
   const [forecastData, setForecastData] = useState(null);
   const [locationSearchTerm, setLocationSearchTerm] = useState(null)
+  //originally, forecastDataList was to hold entire forecast objects as returned by each individual
+  //API calls as a means to handle saving searches, but this was unnecessary and ineffective, so now
+  //it is an array that holds the search terms (string) instead. This is to clarify any naming confusion
   const [forecastDataList, setForecastDataList] = useState([])
 
   useEffect(() => {
@@ -16,7 +17,8 @@ function App() {
       localStorage.setItem("forecastDataList", "[]");
     }
     setForecastDataList(JSON.parse(localStorage.getItem("forecastDataList")))
-  }, []) //on component mount, if there's no key "forecastDataList" in localStorage, initialize it with an empty array
+  }, []) //on component mount, if there's no key "forecastDataList" in localStorage or 
+         //if the key has an empty value, initialize it with an empty array
 
   useEffect(() => {
     WeatherApi(locationSearchTerm ? locationSearchTerm : "95138").fetchForecastData(3).then(res => {
@@ -46,35 +48,24 @@ function App() {
 
   const { location } = forecastData;
   //generate array of hourly forecast entries from forecastday.hour based on current time
+  //this const is to be passed as a prop into DayForecast
   const hourlyForecast = generateHourlyForecast(forecastData.forecast.forecastday);
 
   function handleLocationSubmit(e) {
     e.preventDefault();
+    //pull location search term from input form
     const zipFormData = (new FormData(e.target)).get('zip')
     console.log("zipFormData",zipFormData);
+    //set new location search term as state var
     setLocationSearchTerm(zipFormData);
+    //empty the input bar
     document.querySelector(".top-bar__location-input").value = "";
-  }
-
-  //handles when user saves a location for later.
-  //needs to save forecastData as an array element, then convert to json string to store in localStorage
-  //ex: forecastDataList = [ {...} {...} {...} ]
-  function handleLocationSave() {
-    const _ = require('lodash')
-    const currentForecastDataList = JSON.parse(localStorage.getItem("forecastDataList"));
-    
-    console.log("is forecastdata in currentforecastdatalist",currentForecastDataList.includes(forecastData))
-    // console.log("currentForecastDataList", currentForecastDataList)
-    if (forecastDataList.some((fcd) => _.isEqual(fcd.location, forecastData.location))) {
-      alert("Location Already Exists");
-      return;
-    }
-    currentForecastDataList.push(forecastData);
-    localStorage.setItem("forecastDataList", JSON.stringify(currentForecastDataList));
+    //add search term to local storage to track search history
+    addLocationNameToLocalStorage(zipFormData)
   }
   
   function handleSelectLocation(inboundForecastData) {
-    setForecastData(inboundForecastData);
+    setLocationSearchTerm(inboundForecastData);
   }
 
   return (
@@ -82,15 +73,15 @@ function App() {
       <nav className='top-bar'>
         <form className='top-bar__location-form' onSubmit={handleLocationSubmit}>
           <input className='top-bar__location-input' name="zip" placeholder="ZIP Code, City Name, State..." required/>
+          <button className='top-bar__btn' type='submit'>Save</button>
         </form>
-        <button className='top-bar__btn' onClick={handleLocationSave}>Save</button>
         {forecastDataList.map(fcd => (
-          <button key={fcd.location.name} 
+          <button key={fcd} 
             className='top-bar__btn top-bar__btn--location' 
             onClick={() => (
               handleSelectLocation(fcd)
             )}>
-              {fcd.location.name}
+              {fcd}
           </button>
         ))}
         <button className='top-bar__btn'>Delete</button>

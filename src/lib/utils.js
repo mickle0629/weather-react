@@ -59,3 +59,17 @@ export function generateHourlyForecast(forecastDay) {
   console.log("Current state of hourlyResult:", hourlyResult)
   return hourlyResult;
 }
+
+//assumes there is a key in localStorage "forecastDataList" - an array of strings
+//the strings are previous search terms submitted
+//these strings are to be used to fetchData when user wants to pull forecast data related to the location again
+export function addLocationNameToLocalStorage(locName) {
+  const locationList = JSON.parse(localStorage.getItem('forecastDataList'));
+  if (locationList.constructor !== Array) {
+    throw new Error("forecastDataList in localStorage is not an array");
+  }
+  if (locationList.includes(locName)) {
+    return;
+  } 
+  localStorage.setItem("forecastDataList", JSON.stringify([...locationList, locName]))
+}
