@@ -43,6 +43,9 @@
 
 .top-bar__btn--location {
   background-color: white;
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .weather-container {
