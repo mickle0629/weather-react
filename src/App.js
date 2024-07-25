@@ -62,6 +62,7 @@ function App() {
     document.querySelector(".top-bar__location-input").value = "";
     //add search term to local storage to track search history
     addLocationNameToLocalStorage(zipFormData)
+    setForecastDataList([...forecastDataList, zipFormData]);
   }
   
   function handleSelectLocation(inboundForecastData) {
