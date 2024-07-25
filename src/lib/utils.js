@@ -73,3 +73,9 @@ export function addLocationNameToLocalStorage(locName) {
   } 
   localStorage.setItem("forecastDataList", JSON.stringify([...locationList, locName]))
 }
+
+export function deleteLocationFromLocalStorage(locName) {
+  const locationList = JSON.parse(localStorage.getItem("forecastDataList"));
+  const newLocationList = locationList.filter((location) => location !== locName);
+  localStorage.setItem("forecastDataList", JSON.stringify(newLocationList));
+}

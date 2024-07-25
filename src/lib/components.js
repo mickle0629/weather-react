@@ -37,3 +37,18 @@ function ForecastCard({ timestamp, temperature }) {
   )
 }
 
+export function LocationButton({ locName, onClick, onDelete }) {
+  return (
+    <>  
+      <button 
+        className='top-bar__btn top-bar__btn--location' 
+        onClick={() => (
+          onClick(locName)
+      )}>
+        {locName}
+      </button>
+      <button className="top-bar__btn top-bar__btn--delete" onClick={() => onDelete()}>X</button>
+    </>
+  )
+}
+

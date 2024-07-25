@@ -1,9 +1,9 @@
-import { Card, DayForecast } from './lib/components';
+import { Card, DayForecast, LocationButton } from './lib/components';
 import './App.css';
 import './lib/component-styles.css'
 import { useEffect, useRef, useState } from 'react';
 import { WeatherApi } from './lib/api/weatherApi';
-import { formatDate, generateHourlyForecast, addLocationNameToLocalStorage } from './lib/utils';
+import { formatDate, generateHourlyForecast, addLocationNameToLocalStorage, deleteLocationFromLocalStorage } from './lib/utils';
 function App() {
   const [forecastData, setForecastData] = useState(null);
   const [locationSearchTerm, setLocationSearchTerm] = useState(null)
@@ -69,6 +69,14 @@ function App() {
     setLocationSearchTerm(inboundForecastData);
   }
 
+  function handleDeleteLocation(locationName) {
+    const currentForecastDataList = [...forecastDataList];
+    const newForecastDataList = currentForecastDataList.filter((fcd) => fcd !== locationName);
+    deleteLocationFromLocalStorage(locationName);
+    setForecastDataList(newForecastDataList);
+    
+  }
+
   return (
     <main className='app-container'>
       <nav className='top-bar'>
@@ -77,15 +85,15 @@ function App() {
           <button className='top-bar__btn' type='submit'>Save</button>
         </form>
         {forecastDataList.map(fcd => (
-          <button key={fcd} 
-            className='top-bar__btn top-bar__btn--location' 
-            onClick={() => (
-              handleSelectLocation(fcd)
-            )}>
-              {fcd}
-          </button>
+          // <button key={fcd} 
+          //   className='top-bar__btn top-bar__btn--location' 
+          //   onClick={() => (
+          //     handleSelectLocation(fcd)
+          //   )}>
+          //     {fcd}
+          // </button>
+          <LocationButton locName={fcd} onClick={() => handleSelectLocation(fcd)} onDelete={() => handleDeleteLocation(fcd)}/>
         ))}
-        <button className='top-bar__btn'>Delete</button>
       </nav>
       <section className='weather-container'>
         {/* currentTimeEpoch is in seconds, so i gotta convert it to ms */}
